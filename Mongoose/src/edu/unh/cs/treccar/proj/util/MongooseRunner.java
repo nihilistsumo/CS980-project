@@ -36,7 +36,7 @@ public class MongooseRunner {
 							prop.getProperty("out-dir")+"/"+prop.getProperty("sim-data-out"));
 				}
 			}
-		} catch (IOException | ParseException e) {
+		} catch (IOException | ParseException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

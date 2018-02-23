@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Vector;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -33,6 +34,7 @@ import edu.unh.cs.treccar.proj.similarities.LinSimilarity;
 import edu.unh.cs.treccar.proj.similarities.PathSimilarity;
 import edu.unh.cs.treccar.proj.similarities.ResnikSimilarity;
 import edu.unh.cs.treccar.proj.similarities.SimilarityCalculator;
+import edu.unh.cs.treccar.proj.similarities.SimilarityCalculatorThread;
 import edu.unh.cs.treccar.proj.similarities.SimilarityFunction;
 import edu.unh.cs.treccar.proj.similarities.WuPalmerSimilarity;
 import edu.unh.cs.treccar_v2.Data;
@@ -58,7 +60,7 @@ public class MongooseHelper {
 	}
 	
 	public HashMap<String, ArrayList<ParaPairData>> processParaPairData(
-			HashMap<String, ArrayList<String>> pageParasMap) throws IOException, ParseException{
+			HashMap<String, ArrayList<String>> pageParasMap) throws IOException, ParseException, InterruptedException{
 		HashMap<String, ArrayList<ParaPairData>> allPagesData = new HashMap<String, ArrayList<ParaPairData>>();
 		ILexicalDatabase db = new NictWordNet();
 		int i=0;
@@ -95,10 +97,12 @@ public class MongooseHelper {
 	}
 	
 	public ArrayList<ParaPairData> getParaPairData(ArrayList<String> paraIDList, ILexicalDatabase db, 
-			IndexSearcher is, QueryParser qp, Analyzer a) throws IOException, ParseException{
-		ArrayList<ParaPairData> pairData = new ArrayList<ParaPairData>();
+			IndexSearcher is, QueryParser qp, Analyzer a) throws IOException, ParseException, InterruptedException{
+		Vector<ParaPairData> pairData = new Vector<ParaPairData>();
 		Document paradoc1, paradoc2;
 		ArrayList<String> para1tokens, para2tokens;
+		ArrayList<Thread> threadPool = new ArrayList<Thread>();
+		SimilarityCalculator scal = new SimilarityCalculator();
 		for(int i=0; i<paraIDList.size()-1; i++){
 			for(int j=i+1; j<paraIDList.size(); j++){
 				String pid1 = paraIDList.get(i);
@@ -109,14 +113,21 @@ public class MongooseHelper {
 				para2tokens = tokenizeString(a, paradoc2.get("parabody"));
 				//ParaPair pp = new ParaPair(pid1, pid2, this.preprocessedParasMap.get(pid1), this.preprocessedParasMap.get(pid2));
 				ParaPair pp = new ParaPair(pid1, pid2, para1tokens, para2tokens);
+				SimilarityCalculatorThread sct = new SimilarityCalculatorThread(pp, this.p.getProperty("func"), scal, pairData);
+				Thread sctThread = new Thread(sct);
+				sctThread.start();
+				threadPool.add(sctThread);
 				//ArrayList<Double> scores = this.computeScores(3);
-				ArrayList<Double> scores = this.sc.computeScores(pp, this.p.getProperty("func"));
+				//ArrayList<Double> scores = this.sc.computeScores(pp, this.p.getProperty("func"));
 				//System.out.println(scores);
-				ParaPairData ppd = new ParaPairData(pp, scores);
-				pairData.add(ppd);
+				//ParaPairData ppd = new ParaPairData(pp, scores);
+				//pairData.add(ppd);
 			}
 		}
-		return pairData;
+		for(Thread t:threadPool)
+			t.join();
+		ArrayList<ParaPairData> ppdList = new ArrayList<ParaPairData>(pairData);
+		return ppdList;
 	}
 	
 	public static ArrayList<String> tokenizeString(Analyzer analyzer, String string) {

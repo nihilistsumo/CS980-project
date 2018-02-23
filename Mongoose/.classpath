@@ -16,5 +16,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/home/sumanta/git/cs980-class-project-git/Mongoose/ws4j-1.0.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
