@@ -1,0 +1,124 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>Mongoose</groupId>
+  <artifactId>Mongoose</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  <repositories>
+      <repository>
+          <id>jitpack.io</id>
+          <url>https://jitpack.io</url>
+      </repository>
+  </repositories>
+  
+  <dependencies>
+  
+  	<dependency>     
+	    <groupId>com.github.TREMA-UNH</groupId>
+	    <artifactId>trec-car-tools-java</artifactId>
+	    <version>2.0</version>
+    </dependency>
+	<dependency>
+    	<groupId>co.nstant.in</groupId>
+    	<artifactId>cbor</artifactId>
+    	<version>0.8</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-lang3</artifactId>
+		<version>3.3.2</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.opennlp</groupId>
+		<artifactId>opennlp-tools</artifactId>
+		<version>1.8.3</version>
+	</dependency>
+
+	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.0</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.xerial</groupId>
+		<artifactId>sqlite-jdbc</artifactId>
+		<version>3.7.2</version>
+	</dependency>
+	<dependency>
+		<groupId>de.sciss</groupId>
+		<artifactId>jawjaw</artifactId>
+		<version>0.1.0</version>
+	</dependency>
+	<dependency>
+		<groupId>de.sciss</groupId>
+		<artifactId>ws4j</artifactId>
+		<version>0.1.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.0</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.xerial</groupId>
+		<artifactId>sqlite-jdbc</artifactId>
+		<version>3.7.2</version>
+	</dependency>
+
+
+	<!-- https://mvnrepository.com/artifact/org.apache.pivot/pivot-core -->
+	<dependency>
+		<groupId>org.apache.pivot</groupId>
+		<artifactId>pivot-core</artifactId>
+		<version>2.0.5</version>
+	</dependency>
+
+	<!-- https://mvnrepository.com/artifact/org.apache.pivot/pivot-wtk -->
+	<dependency>
+		<groupId>org.apache.pivot</groupId>
+		<artifactId>pivot-wtk</artifactId>
+		<version>2.0.5</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.lucene</groupId>
+		<artifactId>lucene-core</artifactId>
+		<version>6.6.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.lucene</groupId>
+		<artifactId>lucene-analyzers-common</artifactId>
+		<version>6.6.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.lucene</groupId>
+		<artifactId>lucene-queryparser</artifactId>
+		<version>6.6.0</version>
+	</dependency>
+	
+	<dependency>
+    	<groupId>de.sciss</groupId>
+    	<artifactId>ws4j</artifactId>
+    	<version>0.1.0</version>
+	</dependency>
+	
+  </dependencies>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
