@@ -100,7 +100,7 @@ public class MongooseHelper {
 		Document paradoc1, paradoc2;
 		ArrayList<String> para1tokens, para2tokens;
 		for(int i=0; i<paraIDList.size()-1; i++){
-			for(int j=i+1; j<paraIDList.size(); j++){
+			for(int j=i+1; j<paraIDList.size(); j++){ 
 				String pid1 = paraIDList.get(i);
 				String pid2 = paraIDList.get(j);
 				paradoc1 = is.doc(is.search(qp.parse(pid1), 1).scoreDocs[0].doc);
