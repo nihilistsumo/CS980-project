@@ -2,12 +2,15 @@ package edu.unh.cs.treccar.proj.cluster;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 public class ParaMapper {
+	Properties pr;
 	HashMap<String, ArrayList<String>> cl;
 	ArrayList<String> titleIDsToMap;
 	
-	public ParaMapper(HashMap<String, ArrayList<String>> clusters, ArrayList<String> titles){
+	public ParaMapper(Properties p, HashMap<String, ArrayList<String>> clusters, ArrayList<String> titles){
+		this.pr = p;
 		this.cl = clusters;
 		this.titleIDsToMap = titles;
 	}

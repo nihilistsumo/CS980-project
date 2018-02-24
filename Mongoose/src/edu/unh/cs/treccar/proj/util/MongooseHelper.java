@@ -9,8 +9,13 @@ import java.io.ObjectOutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -119,18 +124,31 @@ public class MongooseHelper {
 		return pairData;
 	}
 	
-	public static ArrayList<String> tokenizeString(Analyzer analyzer, String string) {
+	public static ArrayList<String> tokenizeString(Analyzer analyzer, String string){
 	    ArrayList<String> result = new ArrayList<String>();
+	    Map<String, Integer> termFreq = new HashMap<String, Integer>();
+	    String token;
 	    try {
 	    	TokenStream stream  = analyzer.tokenStream(null, new StringReader(string));
 	    	stream.reset();
-	    	while (stream.incrementToken()) {
-	    		result.add(stream.getAttribute(CharTermAttribute.class).toString());
+	    	while (stream.incrementToken()){
+	    		token = stream.getAttribute(CharTermAttribute.class).toString();
+	    		if(termFreq.keySet().contains(token))
+	    			termFreq.put(token, termFreq.get(token)+1);
+	    		else
+	    			termFreq.put(token, 1);
 	    	}
 	    	stream.close();
 	    } catch (IOException e) {
-	    	// not thrown b/c we're using a string reader...
 	    	throw new RuntimeException(e);
+	    }
+	    Map<String, Integer> sortedTermFreq = MapUtil.sortByValue(termFreq);
+	    int count = 0;
+	    for(Map.Entry<String, Integer> entry : sortedTermFreq.entrySet()){
+	    	result.add(entry.getKey());
+	    	count++;
+	    	if(count>9)
+	    		break;
 	    }
 	    return result;
 	}
