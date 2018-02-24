@@ -1,6 +1,7 @@
 package edu.unh.cs.treccar.proj.similarities;
 
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Vector;
 
 import edu.cmu.lti.ws4j.RelatednessCalculator;
@@ -9,13 +10,15 @@ import edu.unh.cs.treccar.proj.util.ParaPairData;
 
 public class SimilarityCalculatorThread implements Runnable{
 
+	Properties p;
 	private ParaPair pp;
 	private String funcs;
 	private SimilarityCalculator sc;
 	private Vector<ParaPairData> ppdVec;
 	
-	public SimilarityCalculatorThread(ParaPair parapair, String flist, SimilarityCalculator scalc, Vector<ParaPairData> ppdList) {
+	public SimilarityCalculatorThread(Properties pr, ParaPair parapair, String flist, SimilarityCalculator scalc, Vector<ParaPairData> ppdList) {
 		// TODO Auto-generated constructor stub
+		this.p = pr;
 		this.pp = parapair;
 		this.funcs = flist;
 		this.sc = scalc;
@@ -70,7 +73,8 @@ public class SimilarityCalculatorThread implements Runnable{
 			scores.add(fCount, simScore);
 			fCount++;
 		}
-		System.out.println("ParaPair "+this.pp.getPara1()+this.pp.getPara2()+" done");
+		if(this.p.getProperty("show-msg").equalsIgnoreCase("yes")||this.p.getProperty("show-msg").equalsIgnoreCase("y"))
+			System.out.println("ParaPair "+this.pp.getPara1()+this.pp.getPara2()+" done");
 		ParaPairData ppd = new ParaPairData(this.pp, scores);
 		this.ppdVec.add(ppd);
 	}

@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -45,6 +47,7 @@ public class MongooseHelper {
 	HashMap<String, ArrayList<String>> preprocessedParasMap;
 	//HashMap<String, ArrayList<String>> reducedParasMap;
 	SimilarityCalculator sc;
+	int noThreads;
 	
 	public MongooseHelper(Properties pr) {
 		// TODO Auto-generated constructor stub
@@ -53,6 +56,12 @@ public class MongooseHelper {
 		this.preprocessedParasMap = DataUtilities.getPreprocessedParaMap(parasMap);
 		//this.reducedParasMap = DataUtilities.getReducedParaMap(preprocessedParasMap);
 		this.sc = new SimilarityCalculator();
+		if(pr.getProperty("use-default-poolsize").equalsIgnoreCase("yes")||
+				pr.getProperty("use-default-poolsize").equalsIgnoreCase("y"))
+			this.noThreads = Runtime.getRuntime().availableProcessors()+1;
+		else
+			this.noThreads = Integer.parseInt(pr.getProperty("threads"));
+		System.out.println("Thread pool size "+this.noThreads);
 	}
 	
 	public void runClustering(Properties p){
@@ -101,7 +110,11 @@ public class MongooseHelper {
 		Vector<ParaPairData> pairData = new Vector<ParaPairData>();
 		Document paradoc1, paradoc2;
 		ArrayList<String> para1tokens, para2tokens;
-		ArrayList<Thread> threadPool = new ArrayList<Thread>();
+		//ArrayList<Thread> threadPool = new ArrayList<Thread>();
+		//int noThreads = Integer.parseInt(this.p.getProperty("threads"));
+		
+		ExecutorService exec = Executors.newFixedThreadPool(this.noThreads);
+		//ExecutorService exec = Executors.newSingleThreadExecutor();
 		SimilarityCalculator scal = new SimilarityCalculator();
 		for(int i=0; i<paraIDList.size()-1; i++){
 			for(int j=i+1; j<paraIDList.size(); j++){
@@ -113,10 +126,12 @@ public class MongooseHelper {
 				para2tokens = tokenizeString(a, paradoc2.get("parabody"));
 				//ParaPair pp = new ParaPair(pid1, pid2, this.preprocessedParasMap.get(pid1), this.preprocessedParasMap.get(pid2));
 				ParaPair pp = new ParaPair(pid1, pid2, para1tokens, para2tokens);
-				SimilarityCalculatorThread sct = new SimilarityCalculatorThread(pp, this.p.getProperty("func"), scal, pairData);
-				Thread sctThread = new Thread(sct);
-				sctThread.start();
-				threadPool.add(sctThread);
+				SimilarityCalculatorThread sct = new SimilarityCalculatorThread(this.p, pp, this.p.getProperty("func"), scal, pairData);
+				exec.execute(sct);
+				//Thread sctThread = new Thread(sct);
+				//sctThread.start();
+				//threadPool.add(sctThread);
+				//System.out.println(pairData.size());
 				//ArrayList<Double> scores = this.computeScores(3);
 				//ArrayList<Double> scores = this.sc.computeScores(pp, this.p.getProperty("func"));
 				//System.out.println(scores);
@@ -124,8 +139,12 @@ public class MongooseHelper {
 				//pairData.add(ppd);
 			}
 		}
+		exec.shutdown();
+		while(!exec.isTerminated());
+		/*
 		for(Thread t:threadPool)
 			t.join();
+		*/
 		ArrayList<ParaPairData> ppdList = new ArrayList<ParaPairData>(pairData);
 		return ppdList;
 	}
